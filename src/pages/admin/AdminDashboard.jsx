@@ -16,6 +16,7 @@ const AdminDashboard = () => {
     price: "",
     originalPrice: "",
     discount: "",
+    stock: "",
     image: null
   });
 
@@ -24,13 +25,13 @@ const AdminDashboard = () => {
   const fetchAll = async () => {
     try {
       const [fRes, sRes, pRes] = await Promise.all([
-        fetch("http://localhost:5000/api/farmers", {
+        fetch("https://dairy-backend4.onrender.com/api/farmers", {
           headers: { Authorization: "Bearer " + token }
         }),
-        fetch("http://localhost:5000/api/users/staff", {
+        fetch("https://dairy-backend4.onrender.com/api/users/staff", {
           headers: { Authorization: "Bearer " + token }
         }),
-        fetch("http://localhost:5000/api/products")
+        fetch("https://dairy-backend4.onrender.com/api/products")
       ]);
 
       setFarmers(await fRes.json());
@@ -66,7 +67,7 @@ formData.append("discount", productForm.discount);
 formData.append("stock", productForm.stock);
 formData.append("image", productForm.image);
 
-    await fetch("http://localhost:5000/api/products", {
+    await fetch("https://dairy-backend4.onrender.com/api/products", {
       method: "POST",
       headers: { Authorization: "Bearer " + token },
       body: formData
@@ -79,19 +80,13 @@ formData.append("image", productForm.image);
   stock: "",
   image: null
 });
-<input
-  style={styles.input}
-  placeholder="Stock"
-  value={productForm.stock}
-  onChange={(e)=>setProductForm({...productForm,stock:e.target.value})}
-/>
     fetchAll();
   };
 
   const addStaff = async (e) => {
     e.preventDefault();
 
-    await fetch("http://localhost:5000/api/users/staff", {
+    await fetch("https://dairy-backend4.onrender.com/api/users/staff", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -107,7 +102,7 @@ formData.append("image", productForm.image);
   const addFarmer = async (e) => {
     e.preventDefault();
 
-    await fetch("http://localhost:5000/api/farmers", {
+    await fetch("https://dairy-backend4.onrender.com/api/farmers", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -121,7 +116,7 @@ formData.append("image", productForm.image);
   };
 
   const deleteProduct = async (id) => {
-    await fetch(`http://localhost:5000/api/products/${id}`, {
+    await fetch(`https://dairy-backend4.onrender.com/api/products/${id}`, {
       method: "DELETE",
       headers: { Authorization: "Bearer " + token }
     });
@@ -129,7 +124,7 @@ formData.append("image", productForm.image);
   };
 
   const deleteFarmer = async (id) => {
-    await fetch(`http://localhost:5000/api/farmers/${id}`, {
+    await fetch(`https://dairy-backend4.onrender.com/api/farmers/${id}`, {
       method: "DELETE",
       headers: { Authorization: "Bearer " + token }
     });
@@ -137,7 +132,7 @@ formData.append("image", productForm.image);
   };
 
   const deleteStaff = async (id) => {
-    await fetch(`http://localhost:5000/api/users/staff/${id}`, {
+    await fetch(`https://dairy-backend4.onrender.com/api/users/staff/${id}`, {
       method: "DELETE",
       headers: { Authorization: "Bearer " + token }
     });
@@ -174,6 +169,15 @@ formData.append("image", productForm.image);
           <input style={styles.input} placeholder="Discount"
             value={productForm.discount}
             onChange={(e)=>setProductForm({...productForm,discount:e.target.value})}/>
+
+            <input
+  style={styles.input}
+  placeholder="Stock"
+  value={productForm.stock}
+  onChange={(e)=>
+    setProductForm({...productForm, stock: e.target.value})
+  }
+/>
 
           <input type="file" style={styles.input}
             onChange={(e)=>setProductForm({...productForm,image:e.target.files[0]})}/>
