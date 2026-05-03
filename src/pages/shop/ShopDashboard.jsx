@@ -7,7 +7,7 @@ const ShopDashboard = ({ setCart }) => {
 
   const fetchProducts = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/products");
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/products`);
       const data = await res.json();
       setProducts(Array.isArray(data) ? data : []);
     } catch (err) {
@@ -59,7 +59,7 @@ const ShopDashboard = ({ setCart }) => {
                 <img
                     src={
                        p.image
-                       ? p.image
+                       ? `${process.env.REACT_APP_API_URL}${p.image}`
                        : "https://via.placeholder.com/200"
                       }
                   alt={p.name}

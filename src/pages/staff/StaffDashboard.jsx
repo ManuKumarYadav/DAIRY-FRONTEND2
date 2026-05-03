@@ -15,13 +15,13 @@ const StaffDashboard = () => {
   });
 
   const fetchProducts = async () => {
-    const res = await fetch("http://localhost:5000/api/products");
+    const res = await fetch(`${process.env.REACT_APP_API_URL}/api/products`);
     const data = await res.json();
     setProducts(data);
   };
 
   const fetchMilk = async () => {
-    const res = await fetch("http://localhost:5000/api/staff/milk", {
+    const res = await fetch(`${process.env.REACT_APP_API_URL}/api/staff/milk`, {
       headers: { Authorization: "Bearer " + token }
     });
     const data = await res.json();
@@ -29,7 +29,7 @@ const StaffDashboard = () => {
   };
 
   const fetchProduction = async () => {
-    const res = await fetch("http://localhost:5000/api/staff/production", {
+    const res = await fetch(`${process.env.REACT_APP_API_URL}/api/staff/production`, {
       headers: { Authorization: "Bearer " + token }
     });
     const data = await res.json();
@@ -45,7 +45,7 @@ const StaffDashboard = () => {
   const handleMilk = async (e) => {
     e.preventDefault();
 
-    await fetch("http://localhost:5000/api/staff/milk", {
+    await fetch(`${process.env.REACT_APP_API_URL}/api/staff/milk`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -66,7 +66,7 @@ const StaffDashboard = () => {
       return;
     }
 
-    await fetch("http://localhost:5000/api/staff/production", {
+    await fetch(`${process.env.REACT_APP_API_URL}/api/staff/production`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

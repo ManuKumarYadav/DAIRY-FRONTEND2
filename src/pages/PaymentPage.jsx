@@ -22,7 +22,7 @@ const PaymentPage = () => {
   const getImage = (item) => {
     if (!item.image) return "https://via.placeholder.com/100";
     if (item.image.startsWith("http")) return item.image;
-    return `http://localhost:5000${item.image}`;
+    return `${process.env.REACT_APP_API_URL}${item.image}`;
   };
 
   const handlePayment = async () => {
@@ -43,7 +43,7 @@ const PaymentPage = () => {
     try {
       setLoading(true);
 
-      const res = await fetch("http://localhost:5000/api/payment/create-order", {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/payment/create-order`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ amount: total }),
@@ -63,7 +63,7 @@ const PaymentPage = () => {
         handler: async function (response) {
           try {
             const verifyRes = await fetch(
-              "http://localhost:5000/api/payment/verify",
+              `${process.env.REACT_APP_API_URL}/api/payment/verify`,
               {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -78,7 +78,7 @@ const PaymentPage = () => {
             }
 
             const saveRes = await fetch(
-              "http://localhost:5000/api/orders",
+              `${process.env.REACT_APP_API_URL}/api/orders`,
               {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },

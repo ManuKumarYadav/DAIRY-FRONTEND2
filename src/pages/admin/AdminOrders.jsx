@@ -5,7 +5,7 @@ const AdminOrders = () => {
 
   const fetchOrders = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/orders");
+      const res = await fetch( `${process.env.REACT_APP_API_URL}/api/orders`);
       const data = await res.json();
       setOrders(data?.data || []);
     } catch (err) {
@@ -14,7 +14,7 @@ const AdminOrders = () => {
     }
   };
   const updateStatus = async (id, status) => {
-    await fetch(`http://localhost:5000/api/orders/${id}`, {
+    await fetch(`${process.env.REACT_APP_API_URL}/api/orders/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status }),

@@ -40,7 +40,7 @@ const Cart = () => {
   const getImage = (item) => {
     if (!item.image) return "https://via.placeholder.com/100";
     if (item.image.startsWith("http")) return item.image;
-    return `http://localhost:5000${item.image}`;
+    return `${process.env.REACT_APP_API_URL}${item.image}`;
   };
 
   return (

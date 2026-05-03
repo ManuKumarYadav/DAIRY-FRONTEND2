@@ -9,15 +9,16 @@ const OrderHistory = () => {
   }, []);
 
   const fetchOrders = async () => {
+
     const res = await fetch(
-      `http://localhost:5000/api/orders/shop/${user?.name}`
-    );
+  `${process.env.REACT_APP_API_URL}/api/orders/shop/${user?.name}`
+);
     const data = await res.json();
     setOrders(data.data || []);
   };
 
   const cancelOrder = async (id) => {
-    await fetch(`http://localhost:5000/api/orders/${id}`, {
+    await fetch(`${process.env.REACT_APP_API_URL}/api/orders/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status: "Cancelled" }),
@@ -35,7 +36,7 @@ const OrderHistory = () => {
   const getImage = (img) => {
     if (!img) return "https://via.placeholder.com/60";
     if (img.startsWith("http")) return img;
-    return `http://localhost:5000${img}`;
+    return `${process.env.REACT_APP_API_URL}${img}`;
   };
 
   return (
