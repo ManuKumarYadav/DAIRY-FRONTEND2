@@ -56,7 +56,7 @@ const ShopDashboard = ({ setCart }) => {
             <div key={p._id} style={styles.card}>
 
               <div style={styles.imgWrapper}>
-                <img
+                {/* <img
                 src={
                  p.image
                  ? `${process.env.REACT_APP_API_URL}/${p.image.replace(/^\/?/, "")}`
@@ -65,7 +65,12 @@ const ShopDashboard = ({ setCart }) => {
                       
                   alt={p.name}
                   style={styles.image}
-                />
+                /> */}
+                <img
+  src={p.image || "https://via.placeholder.com/200"}
+  alt={p.name}
+  style={styles.image}
+/>
 
                 {p.discount > 0 && (
                   <span style={styles.badge}>
