@@ -77,7 +77,6 @@ formData.append("image", productForm.image);
   price: "",
   originalPrice: "",
   discount: "",
-  stock: "",
   image: null
 });
     fetchAll();
