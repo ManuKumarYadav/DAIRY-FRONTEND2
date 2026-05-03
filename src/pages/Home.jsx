@@ -21,28 +21,17 @@ const Home = () => {
     }
   ];
 
-  const products = [
-    {
-      name: "Fresh Cow Milk",
-      price: "₹55/L",
-      image: "https://dairy-backend4.onrender.com/uploads/1774959584018-milk.webp"
-    },
-    {
-      name: "Paneer 500g",
-      price: "₹250",
-      image: "https://dairy-backend4.onrender.com/uploads/1775668729554-Paneer_500g.webp"
-    },
-    {
-      name: "Curd 500g",
-      price: "₹60",
-      image: "https://dairy-backend4.onrender.com/uploads/1774877088289-Curd-cup.png.webp"
-    },
-    {
-      name: "Desi Ghee 500g",
-      price: "₹650",
-      image: "https://dairy-backend4.onrender.com/uploads/1775668317441-image4.webp"
-    }
-  ];
+  const [products, setProducts] = useState([]);
+
+      useEffect(() => {
+      fetch("https://dairy-backend4.onrender.com/api/products")
+      .then(res => res.json())
+      .then(data => {
+      console.log("API DATA:", data);
+      setProducts(data.data || data);
+    })
+    .catch(err => console.log(err));
+}, []);
 
   const stats = [
     { number: "50+", label: "Happy Farms" },
@@ -106,14 +95,20 @@ const Home = () => {
         <h2>Popular Products</h2>
 
         <div className="product-grid">
-          {products.map((item, i) => (
-            <div key={i} className="product-card">
-              <img src={item.image} alt="" />
-              <h3>{item.name}</h3>
-              <p>{item.price}</p>
-            </div>
-          ))}
-        </div>
+  {products.map((item, i) => (
+    <div key={i} className="product-card">
+      <img
+  src={item.image || "https://via.placeholder.com/200"}
+  alt={item.name}
+  onError={(e) => {
+    e.target.src = "https://via.placeholder.com/200";
+  }}
+/>
+      <h3>{item.name}</h3>
+      <p>{item.price}</p>
+    </div>
+  ))}
+</div>
 
         <button className="view-btn" onClick={() => navigate("/shop")}>
           View All →
