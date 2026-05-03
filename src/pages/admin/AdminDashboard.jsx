@@ -16,7 +16,6 @@ const AdminDashboard = () => {
     price: "",
     originalPrice: "",
     discount: "",
-    stock: "",
     image: null
   });
 
