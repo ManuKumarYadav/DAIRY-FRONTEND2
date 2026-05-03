@@ -40,7 +40,7 @@ const ShopDashboard = ({ setCart }) => {
     localStorage.setItem("cart", JSON.stringify(cart));
     if (setCart) setCart(cart);
 
-    alert(product.name + " added to cart");
+    alert(product.name + " added to Cart");
   };
 
   return (
@@ -56,21 +56,11 @@ const ShopDashboard = ({ setCart }) => {
             <div key={p._id} style={styles.card}>
 
               <div style={styles.imgWrapper}>
-                {/* <img
-                src={
-                 p.image
-                 ? `${process.env.REACT_APP_API_URL}/${p.image.replace(/^\/?/, "")}`
-                 : "https://via.placeholder.com/200"
-                   }
-                      
-                  alt={p.name}
-                  style={styles.image}
-                /> */}
                 <img
-  src={p.image || "https://via.placeholder.com/200"}
-  alt={p.name}
-  style={styles.image}
-/>
+                  src={p.image || "https://via.placeholder.com/200"}
+                      alt={p.name}
+                       style={styles.image}
+                     />
 
                 {p.discount > 0 && (
                   <span style={styles.badge}>
