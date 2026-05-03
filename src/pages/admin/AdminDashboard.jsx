@@ -168,14 +168,14 @@ formData.append("image", productForm.image);
             value={productForm.discount}
             onChange={(e)=>setProductForm({...productForm,discount:e.target.value})}/>
 
-            <input
+            {/* <input
   style={styles.input}
   placeholder="Stock"
   value={productForm.stock}
   onChange={(e)=>
     setProductForm({...productForm, stock: e.target.value})
   }
-/>
+/> */}
 
           <input type="file" style={styles.input}
             onChange={(e)=>setProductForm({...productForm,image:e.target.files[0]})}/>
