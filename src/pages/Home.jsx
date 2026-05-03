@@ -25,22 +25,22 @@ const Home = () => {
     {
       name: "Fresh Cow Milk",
       price: "₹55/L",
-      image: "http://localhost:5000/uploads/1774959584018-milk.webp"
+      image: "https://dairy-backend4.onrender.com/uploads/1774959584018-milk.webp"
     },
     {
       name: "Paneer 500g",
       price: "₹250",
-      image: "http://localhost:5000/uploads/1775668729554-Paneer_500g.webp"
+      image: "https://dairy-backend4.onrender.com/uploads/1775668729554-Paneer_500g.webp"
     },
     {
       name: "Curd 500g",
       price: "₹60",
-      image: "http://localhost:5000/uploads/1774877088289-Curd-cup.png.webp"
+      image: "https://dairy-backend4.onrender.com/uploads/1774877088289-Curd-cup.png.webp"
     },
     {
       name: "Desi Ghee 500g",
       price: "₹650",
-      image: "http://localhost:5000/uploads/1775668317441-image4.webp"
+      image: "https://dairy-backend4.onrender.com/uploads/1775668317441-image4.webp"
     }
   ];
 
