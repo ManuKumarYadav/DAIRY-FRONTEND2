@@ -57,11 +57,12 @@ const ShopDashboard = ({ setCart }) => {
 
               <div style={styles.imgWrapper}>
                 <img
-                    src={
-                       p.image
-                       ? `${process.env.REACT_APP_API_URL}${p.image}`
-                       : "https://via.placeholder.com/200"
-                      }
+                src={
+                 p.image
+                 ? `${process.env.REACT_APP_API_URL}/${p.image.replace(/^\/?/, "")}`
+                 : "https://via.placeholder.com/200"
+                   }
+                      
                   alt={p.name}
                   style={styles.image}
                 />
