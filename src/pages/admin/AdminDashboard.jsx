@@ -63,7 +63,7 @@ formData.append("name", productForm.name);
 formData.append("price", productForm.price);
 formData.append("originalPrice", productForm.originalPrice);
 formData.append("discount", productForm.discount);
-formData.append("stock", productForm.stock);
+//formData.append("stock", productForm.stock);
 formData.append("image", productForm.image);
 
     await fetch("https://dairy-backend4.onrender.com/api/products", {
