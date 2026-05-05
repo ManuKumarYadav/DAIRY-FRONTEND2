@@ -34,7 +34,7 @@ const PaymentPage = () => {
     try {
       setLoading(true);
 
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/payment/create-order`, {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/create-order`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -61,7 +61,7 @@ const PaymentPage = () => {
             console.log("PAYMENT SUCCESS:", response);
 
             const verifyRes = await fetch(
-              `${process.env.REACT_APP_API_URL}/api/payment/verify-payment`,
+              `${process.env.REACT_APP_API_URL}/api/verify-payment`,
               {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
