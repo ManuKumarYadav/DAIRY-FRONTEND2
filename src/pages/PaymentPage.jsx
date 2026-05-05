@@ -202,34 +202,167 @@ const PaymentPage = () => {
       </div>
 
       <style>{`
-        .page { background: #020617; min-height: 100vh; padding: 30px; color: #fff; }
-        .container { display: flex; gap: 25px; max-width: 1200px; margin: auto; }
-        .left { flex: 2; }
-        .right { flex: 1; }
-        .glass { background: rgba(255,255,255,0.05); backdrop-filter: blur(15px); border-radius: 16px; padding: 20px; }
-        .item { display: flex; justify-content: space-between; margin: 10px 0; }
-        button { width: 100%; padding: 14px; background: #22c55e; color: #fff; border: none; }
-        .info {
+.page {
+  background: #020617;
+  min-height: 100vh;
+  padding: 20px;
+  color: #fff;
+}
+
+/* MAIN LAYOUT */
+.container {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  gap: 20px;
+  max-width: 1200px;
+  margin: auto;
+  flex-wrap: wrap; /* IMPORTANT */
+}
+
+/* LEFT + RIGHT */
+.left {
+  flex: 2;
+  min-width: 300px;
+}
+
+.right {
+  flex: 1;
+  min-width: 280px;
+}
+
+/* CARD DESIGN */
+.glass {
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(15px);
+  border-radius: 16px;
+  padding: 18px;
+  margin-bottom: 20px;
+}
+
+/* ORDER ITEM */
+.item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 12px 0;
+}
+
+/* IMAGE FIX */
+.item img {
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* TEXT */
+.info {
+  flex: 1;
 }
 
 .info h4 {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
-  color: #3b82f6; /* blue */
+  color: #3b82f6;
 }
 
 .info p {
-  font-size: 14px;
-  color: #6b7280; /* light gray */
+  font-size: 13px;
+  color: #9ca3af;
 }
 
 .price {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: bold;
-  color: #22c55e; /* green */
+  color: #22c55e;
+}
+
+/* SUMMARY */
+.row {
+  display: flex;
+  justify-content: space-between;
+  margin: 8px 0;
+}
+
+.total {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+/* BUTTON */
+button {
+  width: 100%;
+  padding: 14px;
+  background: #22c55e;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 15px;
+}
+
+/* 🚀 MOBILE RESPONSIVE */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .page {
+    padding: 15px;
+  }
+
+  .glass {
+    padding: 15px;
+  }
+
+  .item {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .item img {
+    width: 60px;
+    height: 60px;
+  }
+
+  .info h4 {
+    font-size: 14px;
+  }
+
+  .price {
+    font-size: 14px;
+  }
+}
+
+/* 📱 SMALL MOBILE */
+@media (max-width: 480px) {
+  .item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .price {
+    align-self: flex-end;
+  }
+
+  .info h4 {
+    font-size: 13px;
+  }
+
+  .info p {
+    font-size: 12px;
+  }
+
+  button {
+    padding: 12px;
+    font-size: 14px;
+  }
+}
+
+/* REMOVE HORIZONTAL SCROLL */
+body {
+  overflow-x: hidden;
 }
       `}</style>
     </div>
