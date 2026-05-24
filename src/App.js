@@ -11,8 +11,6 @@ import AddressPage from "./pages/shop/AddressPage";
 
 
 import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
 
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import StaffDashboard from "./pages/staff/StaffDashboard";
@@ -40,8 +38,6 @@ function App() {
       <Routes>
         {/* PUBLIC */}
         <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
         <Route path="/admin/orders" element={<AdminOrders />} />
         <Route path="/payment" element={<PaymentPage />} />   
         <Route path="/order-status" element={<OrderStatus />} />

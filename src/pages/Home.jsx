@@ -1,130 +1,416 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "./home.css";
+import API from "../api/axios";
 import { useNavigate } from "react-router-dom";
 
 const Home = () => {
+
   const navigate = useNavigate();
-  const [currentTestimonial, setCurrentTestimonial] = useState(0);
 
-  const testimonials = [
-    {
-      quote: "Best dairy service! Fresh milk everyday at my doorstep.",
-      author: "Priya S."
-    },
-    {
-      quote: "Love the quality of paneer and curd. Fast delivery!",
-      author: "Rahul K."
-    },
-    {
-      quote: "From farm to table freshness. Highly recommend!",
-      author: "Anita M."
+  const [isLogin, setIsLogin] =
+    useState(true);
+
+  const [name, setName] =
+    useState("");
+
+  const [email, setEmail] =
+    useState("");
+
+  const [password, setPassword] =
+    useState("");
+
+  const [role, setRole] =
+    useState("shop");
+
+  const [message, setMessage] =
+    useState("");
+
+  const [loading, setLoading] =
+    useState(false);
+
+  // LOGIN
+
+  const handleLogin = async (e) => {
+
+    e.preventDefault();
+
+    setLoading(true);
+
+    setMessage("");
+
+    try {
+
+      const res = await API.post(
+        "/api/auth/login",
+        {
+          email,
+          password,
+        }
+      );
+
+      const data = res.data;
+
+      localStorage.setItem(
+        "token",
+        data.token
+      );
+
+      localStorage.setItem(
+        "user",
+        JSON.stringify(data.user)
+      );
+
+      if (data.user.role === "admin") {
+
+        navigate("/admin");
+      }
+
+      else if (
+        data.user.role === "staff"
+      ) {
+
+        navigate("/staff");
+      }
+
+      else {
+
+        navigate("/shop");
+      }
+
+      window.location.reload();
+
+    } catch (err) {
+
+      setMessage(
+        err.response?.data?.msg ||
+        "Login Failed"
+      );
+
+    } finally {
+
+      setLoading(false);
     }
-  ];
+  };
 
-  const [products, setProducts] = useState([]);
+  // REGISTER
 
-      useEffect(() => {
-      fetch("https://dairy-backend4.onrender.com/api/products")
-      .then(res => res.json())
-      .then(data => {
-      console.log("API DATA:", data);
-      setProducts(data.data || data);
-    })
-    .catch(err => console.log(err));
-}, []);
+  const handleRegister = async (e) => {
 
-  const stats = [
-    { number: "50+", label: "Happy Farms" },
-    { number: "1000+", label: "Orders Daily" },
-    { number: "5★", label: "Rating" },
-    { number: "24/7", label: "Support" }
-  ];
+    e.preventDefault();
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
-    }, 4000);
+    setLoading(true);
 
-    return () => clearInterval(interval);
-  }, []);
+    setMessage("");
+
+    try {
+
+      await API.post(
+        "/api/auth/register",
+        {
+          name,
+          username: name,
+          email,
+          password,
+          role,
+        }
+      );
+
+      setMessage(
+        "Registration Successful"
+      );
+
+      setIsLogin(true);
+
+    } catch (err) {
+
+      setMessage(
+        err.response?.data?.message ||
+        "Register Failed"
+      );
+
+    } finally {
+
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="home">
 
-      <section className="hero">
-        <div className="hero-content">
-          <h1>Fresh Dairy Straight from Farm</h1>
+    <div className="premium-home">
+
+      {/* BACKGROUND */}
+
+      <div className="glow glow-one"></div>
+      <div className="glow glow-two"></div>
+
+      {/* HERO */}
+
+      <section className="premium-hero">
+
+        {/* LEFT */}
+
+        <div className="hero-left">
+
+          <div className="hero-badge">
+            🚀 Smart Dairy Management
+          </div>
+
+          <h1>
+            Fresh Dairy
+            <span> Delivered</span>
+            <br />
+            Every Morning
+          </h1>
+
           <p>
-            Experience pure, farm-fresh milk, paneer, curd & more delivered daily.
+            Order premium farm fresh milk,
+            paneer, curd, butter and more
+            directly from trusted dairy farms.
           </p>
 
-          <div className="buttons">
-            <button className="btn-blue" onClick={() => navigate("/login")}>
-              Shop Now
-            </button>
-            <button className="btn-yellow" onClick={() => navigate("/register")}>
-              Get Started
-            </button>
+          <div className="feature-list">
+
+            <div className="feature-card">
+              ✅ Daily Fresh Delivery
+            </div>
+
+            <div className="feature-card">
+              ✅ Secure Online Payments
+            </div>
+
+            <div className="feature-card">
+              ✅ Trusted Dairy Farmers
+            </div>
+
           </div>
+
+          <div className="hero-stats">
+
+            <div className="stat-box">
+
+              <h2>10K+</h2>
+
+              <span>Customers</span>
+
+            </div>
+
+            <div className="stat-box">
+
+              <h2>24/7</h2>
+
+              <span>Delivery</span>
+
+            </div>
+
+            <div className="stat-box">
+
+              <h2>100%</h2>
+
+              <span>Fresh</span>
+
+            </div>
+
+          </div>
+
         </div>
 
-        <div className="hero-image"></div>
-      </section>
+        {/* RIGHT */}
 
-      <section className="features">
-        <h2>Why Choose DairyNest?</h2>
+        <div className="auth-wrapper">
 
-        <div className="cards">
-          <div className="card"><h3>Fresh</h3></div>
-          <div className="card"><h3>Fast</h3></div>
-          <div className="card"><h3>Quality</h3></div>
-          <div className="card"><h3>Eco</h3></div>
-        </div>
-      </section>
+          <div className="auth-card">
 
-      <section className="stats">
-        {stats.map((item, i) => (
-          <div key={i}>
-            <h3>{item.number}</h3>
-            <p>{item.label}</p>
+            {/* TABS */}
+
+            <div className="tabs">
+
+              <button
+                className={
+                  isLogin
+                    ? "active-tab"
+                    : ""
+                }
+                onClick={() =>
+                  setIsLogin(true)
+                }
+              >
+                Login
+              </button>
+
+              <button
+                className={
+                  !isLogin
+                    ? "active-tab"
+                    : ""
+                }
+                onClick={() =>
+                  setIsLogin(false)
+                }
+              >
+                Register
+              </button>
+
+            </div>
+
+            <h2>
+              {
+                isLogin
+                  ? "Welcome Back"
+                  : "Create Account"
+              }
+            </h2>
+
+            <p className="auth-subtitle">
+
+              {
+                isLogin
+                  ? "Login to continue your dairy orders"
+                  : "Join DairyNest today"
+              }
+
+            </p>
+
+            {message && (
+
+              <div className="message-box">
+                {message}
+              </div>
+            )}
+
+            {/* LOGIN */}
+
+            {
+              isLogin ? (
+
+                <form
+                  onSubmit={handleLogin}
+                  className="auth-form"
+                >
+
+                  <input
+                    type="email"
+                    placeholder="Email Address"
+                    value={email}
+                    onChange={(e) =>
+                      setEmail(
+                        e.target.value
+                      )
+                    }
+                    required
+                  />
+
+                  <input
+                    type="password"
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e) =>
+                      setPassword(
+                        e.target.value
+                      )
+                    }
+                    required
+                  />
+
+                  <button
+                    className="auth-btn"
+                    disabled={loading}
+                  >
+
+                    {
+                      loading
+                        ? "Please Wait..."
+                        : "Login Now"
+                    }
+
+                  </button>
+
+                </form>
+
+              ) : (
+
+                <form
+                  onSubmit={handleRegister}
+                  className="auth-form"
+                >
+
+                  <input
+                    type="text"
+                    placeholder="Full Name"
+                    value={name}
+                    onChange={(e) =>
+                      setName(
+                        e.target.value
+                      )
+                    }
+                    required
+                  />
+
+                  <input
+                    type="email"
+                    placeholder="Email Address"
+                    value={email}
+                    onChange={(e) =>
+                      setEmail(
+                        e.target.value
+                      )
+                    }
+                    required
+                  />
+
+                  <input
+                    type="password"
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e) =>
+                      setPassword(
+                        e.target.value
+                      )
+                    }
+                    required
+                  />
+
+                  <select
+                    value={role}
+                    onChange={(e) =>
+                      setRole(
+                        e.target.value
+                      )
+                    }
+                  >
+
+                    <option value="shop">
+                      Shop
+                    </option>
+
+                    <option value="staff">
+                      Staff
+                    </option>
+
+                  </select>
+
+                  <button
+                    className="auth-btn"
+                    disabled={loading}
+                  >
+
+                    {
+                      loading
+                        ? "Creating..."
+                        : "Create Account"
+                    }
+
+                  </button>
+
+                </form>
+
+              )
+            }
+
           </div>
-        ))}
+
+        </div>
+
       </section>
-
-      <section className="products">
-        <h2>Popular Products</h2>
-
-        <div className="product-grid">
-  {products.map((item, i) => (
-    <div key={i} className="product-card">
-      <img
-  src={item.image || "https://via.placeholder.com/200"}
-  alt={item.name}
-  onError={(e) => {
-    e.target.src = "https://via.placeholder.com/200";
-  }}
-/>
-      <h3>{item.name}</h3>
-      <p>{item.price}</p>
-    </div>
-  ))}
-</div>
-
-        <button className="view-btn" onClick={() => navigate("/shop")}>
-          View All →
-        </button>
-      </section>
-
-      <section className="testimonial">
-        <h2>What Our Customers Say</h2>
-        <p>"{testimonials[currentTestimonial].quote}"</p>
-        <h4>- {testimonials[currentTestimonial].author}</h4>
-      </section>
-      
-      <footer className="footer">
-        <h3>DairyNest</h3>
-        <p>© 2026 DairyNest</p>
-      </footer>
 
     </div>
   );
