@@ -1,48 +1,44 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  FaArrowRight,
+  FaBoxOpen,
+  FaCartPlus,
+  FaCheckCircle,
+  FaLeaf,
+  FaRupeeSign,
+  FaShoppingBasket,
+  FaSnowflake,
+  FaTruck,
+} from "react-icons/fa";
 
 const ShopDashboard = ({ setCart }) => {
-
   const [products, setProducts] = useState([]);
   const navigate = useNavigate();
 
-  const fetchProducts = async () => {
-
+  const fetchProducts = useCallback(async () => {
     try {
-
-      const res = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/products`
-      );
-
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/products`);
       const data = await res.json();
 
       setProducts(Array.isArray(data) ? data : []);
-
     } catch (err) {
-
       console.log(err);
       setProducts([]);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchProducts();
-  }, []);
+  }, [fetchProducts]);
 
   const addToCart = (product) => {
-
-    let cart =
-      JSON.parse(localStorage.getItem("cart")) || [];
-
-    const existing =
-      cart.find((item) => item._id === product._id);
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const existing = cart.find((item) => item._id === product._id);
 
     if (existing) {
-
       existing.quantity += 1;
-
     } else {
-
       cart.push({
         _id: product._id,
         name: product.name,
@@ -52,470 +48,372 @@ const ShopDashboard = ({ setCart }) => {
       });
     }
 
-    localStorage.setItem(
-      "cart",
-      JSON.stringify(cart)
-    );
-
+    localStorage.setItem("cart", JSON.stringify(cart));
     if (setCart) setCart(cart);
-
     alert(product.name + " added to Cart");
   };
 
+  const metrics = [
+    { label: "Fresh Products", value: products.length, icon: <FaBoxOpen /> },
+    { label: "Cold Packed", value: "100%", icon: <FaSnowflake /> },
+    { label: "Morning Delivery", value: "7 AM", icon: <FaTruck /> },
+  ];
+
   return (
-    <div style={styles.page}>
-
-      {/* TOP */}
-
-      <div style={styles.topSection}>
-
+    <main style={styles.page}>
+      <section style={styles.hero}>
         <div>
-
-          <h1 style={styles.heading}>
-            Premium Dairy Products
-          </h1>
-
+          <span style={styles.eyebrow}>
+            <FaLeaf />
+            DairyNest Shop
+          </span>
+          <h1 style={styles.heading}>Premium dairy products for your daily counter.</h1>
           <p style={styles.subtitle}>
-            Fresh farm products delivered directly
-            to your doorstep everyday.
+            Order fresh milk, paneer, curd, ghee, lassi, and ice cream with
+            clean packing and reliable morning dispatch.
           </p>
-
         </div>
 
-      </div>
+        <div style={styles.heroPanel}>
+          <FaShoppingBasket style={styles.heroPanelIcon} />
+          <strong>Shop-ready dairy catalog</strong>
+          <span>Fresh inventory, fair pricing, and easy checkout.</span>
+          <button style={styles.cartJumpBtn} onClick={() => navigate("/cart")}>
+            Open Cart
+            <FaArrowRight />
+          </button>
+        </div>
+      </section>
 
-      {/* PRODUCTS */}
+      <section style={styles.metricsGrid}>
+        {metrics.map((item) => (
+          <article style={styles.metricCard} key={item.label}>
+            <span style={styles.metricIcon}>{item.icon}</span>
+            <div>
+              <strong style={styles.metricValue}>{item.value}</strong>
+              <p style={styles.metricLabel}>{item.label}</p>
+            </div>
+          </article>
+        ))}
+      </section>
 
-      <div style={styles.grid}>
-
+      <section style={styles.grid}>
         {products.length === 0 ? (
-
-          <h2 style={{ color: "white" }}>
-            No Products Available
-          </h2>
-
+          <div style={styles.emptyCard}>
+            <FaBoxOpen />
+            <h2>No Products Available</h2>
+            <p>Fresh DairyNest products will appear here once admin adds them.</p>
+          </div>
         ) : (
-
-          products.map((p) => (
-
-            <div
-              key={p._id}
-              style={styles.card}
-            >
-
-              {/* IMAGE */}
-
+          products.map((product) => (
+            <article key={product._id} style={styles.card}>
               <div style={styles.imageBox}>
-
-                <img
-                  src={
-                    p.image ||
-                    "https://via.placeholder.com/300"
-                  }
-                  alt={p.name}
-                  style={styles.image}
-                />
-
-                {p.discount > 0 && (
-
-                  <div style={styles.discount}>
-                    {p.discount}% OFF
-                  </div>
-                )}
+                <img src={product.image || "https://via.placeholder.com/300?text=DairyNest"} alt={product.name} style={styles.image} />
+                {product.discount > 0 && <span style={styles.discount}>{product.discount}% OFF</span>}
+                <span style={styles.freshBadge}>
+                  <FaCheckCircle />
+                  Fresh
+                </span>
               </div>
-
-              {/* DETAILS */}
 
               <div style={styles.details}>
-
-                <h2 style={styles.name}>
-                  {p.name}
-                </h2>
+                <h2 style={styles.name}>{product.name}</h2>
+                <p style={styles.desc}>Premium DairyNest dairy product for shop supply.</p>
 
                 <div style={styles.priceRow}>
-
-                  <span style={styles.price}>
-                    ₹{p.price}
-                  </span>
-
-                  {p.originalPrice && (
-
-                    <span style={styles.oldPrice}>
-                      ₹{p.originalPrice}
-                    </span>
-                  )}
+                  <strong style={styles.price}>
+                    <FaRupeeSign />
+                    {product.price}
+                  </strong>
+                  {product.originalPrice && <span style={styles.oldPrice}>Rs {product.originalPrice}</span>}
                 </div>
 
-                <p style={styles.stock}>
-                  {p.stock === 0
-                    ? "Out of Stock"
-                    : `Stock: ${p.stock}`}
+                <p style={{ ...styles.stock, ...(product.stock === 0 ? styles.outStock : {}) }}>
+                  {product.stock === 0 ? "Out of Stock" : `Stock: ${product.stock}`}
                 </p>
 
-                {/* BUTTONS */}
-
                 <div style={styles.btnRow}>
-
                   <button
-                    style={{
-                      ...styles.cartBtn,
-                      opacity:
-                        p.stock === 0 ? 0.5 : 1,
-                    }}
-                    disabled={p.stock === 0}
-                    onClick={() => addToCart(p)}
+                    style={{ ...styles.cartBtn, opacity: product.stock === 0 ? 0.5 : 1 }}
+                    disabled={product.stock === 0}
+                    onClick={() => addToCart(product)}
                   >
-                    Add To Cart
+                    <FaCartPlus />
+                    Add Cart
                   </button>
-
-                  <button
-                    style={styles.buyBtn}
-                    onClick={() =>
-                      navigate("/cart")
-                    }
-                  >
+                  <button style={styles.buyBtn} onClick={() => navigate("/cart")}>
                     Buy Now
                   </button>
-
                 </div>
-
               </div>
-
-            </div>
+            </article>
           ))
         )}
-      </div>
-    </div>
+      </section>
+    </main>
   );
 };
 
 export default ShopDashboard;
 
-
 const styles = {
-
-  /* ================= PAGE ================= */
-
   page: {
-
     minHeight: "100vh",
-
-    paddingTop:
-      window.innerWidth < 768 ? "105px" : "120px",
-
-    paddingLeft:
-      window.innerWidth < 768 ? "16px" : "40px",
-
-    paddingRight:
-      window.innerWidth < 768 ? "16px" : "40px",
-
-    paddingBottom: "40px",
-
+    padding: "122px clamp(16px, 4vw, 42px) 54px",
+    color: "#10233f",
     background:
-    `
-    radial-gradient(circle at top left, rgba(37,99,235,0.18), transparent 25%),
-    radial-gradient(circle at bottom right, rgba(34,197,94,0.12), transparent 25%),
-    linear-gradient(135deg,#0f172a,#111827,#020617)
-    `,
-
-    backgroundAttachment:"fixed",
-
-    overflowX:"hidden",
+      "radial-gradient(circle at 82% 12%, rgba(255,212,59,0.28), transparent 22rem), radial-gradient(circle at 12% 22%, rgba(8,120,184,0.18), transparent 24rem), linear-gradient(90deg, rgba(23,82,170,0.06) 1px, transparent 1px), linear-gradient(rgba(23,82,170,0.06) 1px, transparent 1px), linear-gradient(135deg,#ffffff 0%,#e8f6ff 45%,#fff7d9 100%)",
+    backgroundSize: "auto, auto, 46px 46px, 46px 46px, auto",
   },
-
-  /* ================= TOP ================= */
-
-  topSection: {
-
-    display: "flex",
-
-    justifyContent: "space-between",
-
-    alignItems:
-      window.innerWidth < 900
-        ? "flex-start"
-        : "center",
-
-    flexDirection:
-      window.innerWidth < 900
-        ? "column"
-        : "row",
-
-    gap: "20px",
-
-    marginBottom:
-      window.innerWidth < 768
-        ? "30px"
-        : "40px",
-  },
-
-  heading: {
-
-    fontSize:
-      window.innerWidth < 480
-        ? "34px"
-        : window.innerWidth < 768
-        ? "42px"
-        : "52px",
-
-    fontWeight: "900",
-
-    lineHeight: "1.1",
-
-    color: "white",
-
-    marginBottom: "10px",
-  },
-
-  subtitle: {
-
-    color: "#94a3b8",
-
-    fontSize:
-      window.innerWidth < 768
-        ? "15px"
-        : "20px",
-
-    maxWidth: "700px",
-
-    lineHeight: "1.7",
-  },
-
-  /* ================= GRID ================= */
-
-  grid: {
-
+  hero: {
     display: "grid",
-
-    gridTemplateColumns:
-      window.innerWidth < 600
-        ? "1fr"
-        : "repeat(auto-fill,minmax(280px,1fr))",
-
-    gap:
-      window.innerWidth < 768
-        ? "20px"
-        : "30px",
+    gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 360px), 1fr))",
+    gap: 24,
+    alignItems: "center",
+    maxWidth: 1220,
+    margin: "0 auto 24px",
+    padding: 30,
+    border: "1px solid rgba(11,87,164,0.14)",
+    borderRadius: 8,
+    background: "linear-gradient(135deg, rgba(255,255,255,0.94), rgba(240,247,255,0.9))",
+    boxShadow: "0 30px 90px rgba(6,35,83,0.13)",
   },
-
-  /* ================= CARD ================= */
-
+  eyebrow: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 9,
+    minHeight: 38,
+    padding: "8px 14px",
+    borderRadius: 999,
+    color: "#0b57a4",
+    background: "#fff2a8",
+    fontSize: 13,
+    fontWeight: 900,
+  },
+  heading: {
+    marginTop: 16,
+    color: "#0b3f8a",
+    fontSize: "clamp(34px, 5vw, 58px)",
+    lineHeight: 1.04,
+    fontWeight: 900,
+  },
+  subtitle: {
+    maxWidth: 720,
+    marginTop: 14,
+    color: "#53667f",
+    fontSize: 17,
+    lineHeight: 1.65,
+  },
+  heroPanel: {
+    display: "grid",
+    gap: 10,
+    padding: 24,
+    borderRadius: 8,
+    color: "#fff",
+    background: "linear-gradient(145deg, rgba(11,63,138,0.98), rgba(8,120,184,0.92))",
+    boxShadow: "0 24px 60px rgba(11,63,138,0.22)",
+  },
+  heroPanelIcon: {
+    width: 50,
+    height: 50,
+    padding: 13,
+    borderRadius: 8,
+    color: "#0b3f8a",
+    background: "#ffd43b",
+  },
+  cartJumpBtn: {
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 10,
+    minHeight: 50,
+    marginTop: 10,
+    border: 0,
+    borderRadius: 8,
+    color: "#0b3f8a",
+    background: "#ffd43b",
+    fontSize: 15,
+    fontWeight: 900,
+    cursor: "pointer",
+  },
+  metricsGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+    gap: 14,
+    maxWidth: 1220,
+    margin: "0 auto 24px",
+  },
+  metricCard: {
+    display: "flex",
+    alignItems: "center",
+    gap: 14,
+    minHeight: 112,
+    padding: 20,
+    border: "1px solid rgba(11,87,164,0.12)",
+    borderRadius: 8,
+    background: "rgba(255,255,255,0.9)",
+    boxShadow: "0 24px 60px rgba(6,35,83,0.1)",
+  },
+  metricIcon: {
+    display: "grid",
+    width: 48,
+    height: 48,
+    placeItems: "center",
+    borderRadius: 8,
+    color: "#fff",
+    background: "#0b57a4",
+  },
+  metricValue: {
+    display: "block",
+    color: "#0b3f8a",
+    fontSize: 28,
+    lineHeight: 1,
+    fontWeight: 900,
+  },
+  metricLabel: {
+    marginTop: 7,
+    color: "#53667f",
+    fontSize: 13,
+    fontWeight: 800,
+  },
+  grid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fill, minmax(270px, 1fr))",
+    gap: 18,
+    maxWidth: 1220,
+    margin: "0 auto",
+  },
   card: {
-
-    background:
-      "rgba(15,23,42,0.85)",
-
-    border:
-      "1px solid rgba(255,255,255,0.06)",
-
-    borderRadius:
-      window.innerWidth < 768
-        ? "22px"
-        : "28px",
-
     overflow: "hidden",
-
-    transition: "0.35s",
-
-    backdropFilter: "blur(20px)",
-
-    boxShadow:
-      "0 15px 40px rgba(0,0,0,0.35)",
+    border: "1px solid rgba(11,87,164,0.12)",
+    borderRadius: 8,
+    background: "#fff",
+    boxShadow: "0 24px 60px rgba(6,35,83,0.1)",
   },
-
-  /* ================= IMAGE ================= */
-
   imageBox: {
-
     position: "relative",
-
-    height:
-      window.innerWidth < 480
-        ? "220px"
-        : "260px",
-
-    overflow: "hidden",
+    height: 235,
+    background: "#eef5ff",
   },
-
   image: {
-
     width: "100%",
     height: "100%",
-
     objectFit: "cover",
-
-    transition: "0.4s",
   },
-
   discount: {
-
     position: "absolute",
-
-    top: "15px",
-    left: "15px",
-
-    background:
-      "linear-gradient(135deg,#22c55e,#16a34a)",
-
-    color: "white",
-
-    padding:
-      window.innerWidth < 480
-        ? "6px 12px"
-        : "8px 14px",
-
-    borderRadius: "12px",
-
-    fontSize:
-      window.innerWidth < 480
-        ? "11px"
-        : "13px",
-
-    fontWeight: "700",
+    top: 12,
+    left: 12,
+    padding: "7px 11px",
+    borderRadius: 8,
+    color: "#0b3f8a",
+    background: "#ffd43b",
+    fontSize: 12,
+    fontWeight: 900,
   },
-
-  /* ================= DETAILS ================= */
-
+  freshBadge: {
+    position: "absolute",
+    right: 12,
+    bottom: 12,
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 7,
+    minHeight: 34,
+    padding: "0 11px",
+    borderRadius: 999,
+    color: "#166534",
+    background: "#dcfce7",
+    fontSize: 12,
+    fontWeight: 900,
+  },
   details: {
-
-    padding:
-      window.innerWidth < 768
-        ? "18px"
-        : "24px",
+    padding: 18,
   },
-
   name: {
-
-    color: "white",
-
-    fontSize:
-      window.innerWidth < 480
-        ? "24px"
-        : "28px",
-
-    fontWeight: "800",
-
-    marginBottom: "14px",
-
+    color: "#10233f",
+    fontSize: 22,
+    fontWeight: 900,
+    lineHeight: 1.2,
     wordBreak: "break-word",
   },
-
+  desc: {
+    marginTop: 8,
+    color: "#53667f",
+    fontSize: 13,
+    fontWeight: 800,
+    lineHeight: 1.45,
+  },
   priceRow: {
-
     display: "flex",
-
     alignItems: "center",
-
     flexWrap: "wrap",
-
-    gap: "14px",
-
-    marginBottom: "10px",
+    gap: 10,
+    marginTop: 14,
   },
-
   price: {
-
-    color: "#22c55e",
-
-    fontSize:
-      window.innerWidth < 480
-        ? "26px"
-        : "30px",
-
-    fontWeight: "800",
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 4,
+    color: "#0b57a4",
+    fontSize: 24,
+    fontWeight: 900,
   },
-
   oldPrice: {
-
-    color: "#94a3b8",
-
-    fontSize:
-      window.innerWidth < 480
-        ? "15px"
-        : "18px",
-
+    color: "#8797ab",
+    fontSize: 14,
+    fontWeight: 800,
     textDecoration: "line-through",
   },
-
   stock: {
-
-    color: "#cbd5e1",
-
-    fontSize:
-      window.innerWidth < 480
-        ? "14px"
-        : "16px",
-
-    marginBottom: "20px",
+    marginTop: 10,
+    color: "#166534",
+    fontSize: 13,
+    fontWeight: 900,
   },
-
-  /* ================= BUTTONS ================= */
-
+  outStock: {
+    color: "#991b1b",
+  },
   btnRow: {
-
-    display: "flex",
-
-    flexDirection:
-      window.innerWidth < 480
-        ? "column"
-        : "row",
-
-    gap: "15px",
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr",
+    gap: 10,
+    marginTop: 16,
   },
-
   cartBtn: {
-
-    flex: 1,
-
-    border: "none",
-
-    padding:
-      window.innerWidth < 480
-        ? "13px"
-        : "14px",
-
-    borderRadius: "16px",
-
-    background:
-      "linear-gradient(135deg,#f59e0b,#f97316)",
-
-    color: "white",
-
-    fontSize:
-      window.innerWidth < 480
-        ? "14px"
-        : "16px",
-
-    fontWeight: "700",
-
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    minHeight: 46,
+    border: 0,
+    borderRadius: 8,
+    color: "#0b3f8a",
+    background: "#ffd43b",
+    fontSize: 14,
+    fontWeight: 900,
     cursor: "pointer",
   },
-
   buyBtn: {
-
-    flex: 1,
-
-    border: "none",
-
-    padding:
-      window.innerWidth < 480
-        ? "13px"
-        : "14px",
-
-    borderRadius: "16px",
-
-    background:
-      "linear-gradient(135deg,#2563eb,#22c55e)",
-
-    color: "white",
-
-    fontSize:
-      window.innerWidth < 480
-        ? "14px"
-        : "16px",
-
-    fontWeight: "700",
-
+    minHeight: 46,
+    border: 0,
+    borderRadius: 8,
+    color: "#fff",
+    background: "linear-gradient(135deg,#0b57a4,#0878b8)",
+    fontSize: 14,
+    fontWeight: 900,
     cursor: "pointer",
+  },
+  emptyCard: {
+    gridColumn: "1 / -1",
+    display: "grid",
+    placeItems: "center",
+    minHeight: 300,
+    padding: 30,
+    border: "1px solid rgba(11,87,164,0.12)",
+    borderRadius: 8,
+    background: "rgba(255,255,255,0.9)",
+    color: "#0b3f8a",
+    textAlign: "center",
+    boxShadow: "0 24px 60px rgba(6,35,83,0.1)",
   },
 };

@@ -1,869 +1,398 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  FaArrowRight,
+  FaMinus,
+  FaPlus,
+  FaRupeeSign,
+  FaShoppingCart,
+  FaSnowflake,
+  FaTrash,
+  FaTruck,
+} from "react-icons/fa";
 
 const Cart = () => {
-
   const [cart, setCart] = useState([]);
-
   const navigate = useNavigate();
 
   useEffect(() => {
-
-    const saved =
-      JSON.parse(localStorage.getItem("cart")) || [];
-
+    const saved = JSON.parse(localStorage.getItem("cart")) || [];
     setCart(saved);
-
   }, []);
 
   const updateCart = (updated) => {
-
     setCart(updated);
-
-    localStorage.setItem(
-      "cart",
-      JSON.stringify(updated)
-    );
+    localStorage.setItem("cart", JSON.stringify(updated));
   };
 
-  const increaseQty = (i) => {
-
+  const increaseQty = (index) => {
     const updated = [...cart];
-
-    updated[i].quantity++;
-
+    updated[index].quantity += 1;
     updateCart(updated);
   };
 
-  const decreaseQty = (i) => {
-
+  const decreaseQty = (index) => {
     const updated = [...cart];
-
-    if (updated[i].quantity > 1) {
-      updated[i].quantity--;
-    }
-
+    if (updated[index].quantity > 1) updated[index].quantity -= 1;
     updateCart(updated);
   };
 
-  const removeItem = (i) => {
-
-    const updated =
-      cart.filter((_, index) => index !== i);
-
-    updateCart(updated);
+  const removeItem = (index) => {
+    updateCart(cart.filter((_, itemIndex) => itemIndex !== index));
   };
 
-  const total = cart.reduce(
-    (sum, item) =>
-      sum + item.price * item.quantity,
-    0
-  );
+  const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const getImage = (item) => {
-
-    if (!item.image)
-      return "https://via.placeholder.com/120";
-
-    if (item.image.startsWith("http"))
-      return item.image;
-
+    if (!item.image) return "https://via.placeholder.com/220?text=DairyNest";
+    if (item.image.startsWith("http")) return item.image;
     return `${process.env.REACT_APP_API_URL}${item.image}`;
   };
 
   return (
-
-    <div className="cart-page">
-
-      <div className="cart-overlay"></div>
-
-      <div className="cart-container">
-
-        {/* LEFT */}
-
-        <div className="cart-left">
-
-          <div className="cart-heading">
-
-            <span className="cart-badge">
+    <main style={styles.page}>
+      <section style={styles.container}>
+        <div style={styles.left}>
+          <div style={styles.hero}>
+            <span style={styles.eyebrow}>
+              <FaShoppingCart />
               Premium Cart
             </span>
-
-            <h1>
-              Shopping Cart
-              <span>
-                {" "}[{cart.length}]
-              </span>
-            </h1>
-
-            <p>
-              Manage your premium dairy products
-              before checkout.
+            <h1 style={styles.heading}>Shopping Cart [{cart.length}]</h1>
+            <p style={styles.subtitle}>
+              Review your fresh DairyNest products before delivery checkout.
             </p>
-
           </div>
 
-          {
-            cart.length === 0 ? (
+          {cart.length === 0 ? (
+            <div style={styles.emptyCard}>
+              <FaShoppingCart />
+              <h2>Your Cart is Empty</h2>
+              <p>Add premium dairy products to continue shopping.</p>
+              <button style={styles.shopBtn} onClick={() => navigate("/shop")}>
+                Continue Shopping
+              </button>
+            </div>
+          ) : (
+            cart.map((item, index) => (
+              <article key={`${item._id}-${index}`} style={styles.cartCard}>
+                <img src={getImage(item)} alt={item.name} style={styles.image} />
 
-              <div className="empty-cart glass">
-
-                <h2>Your Cart is Empty</h2>
-
-                <p>
-                  Add premium dairy products
-                  to continue shopping.
-                </p>
-
-                <button
-                  className="shop-btn"
-                  onClick={() => navigate("/shop")}
-                >
-                  Continue Shopping
-                </button>
-
-              </div>
-
-            ) : (
-
-              cart.map((item, i) => (
-
-                <div
-                  key={i}
-                  className="cart-card glass"
-                >
-
-                  <div className="image-box">
-
-                    <img
-                      src={getImage(item)}
-                      alt=""
-                    />
-
-                    <div className="discount">
-                      Premium
-                    </div>
-
-                  </div>
-
-                  <div className="cart-details">
-
-                    <h3>{item.name}</h3>
-
-                    <p className="product-desc">
-                      Farm fresh dairy product
-                    </p>
-
-                    <div className="price-row">
-
-                      <span className="main-price">
-                        ₹{item.price}
-                      </span>
-
-                      <span className="old-price">
-                        ₹{item.price + 80}
-                      </span>
-
-                    </div>
-
-                    <div className="qty-row">
-
-                      <button
-                        className="qty-btn"
-                        onClick={() =>
-                          decreaseQty(i)
-                        }
-                      >
-                        −
-                      </button>
-
-                      <span className="qty-num">
-                        {item.quantity}
-                      </span>
-
-                      <button
-                        className="qty-btn"
-                        onClick={() =>
-                          increaseQty(i)
-                        }
-                      >
-                        +
-                      </button>
-
-                    </div>
-
-                    <button
-                      className="remove-btn"
-                      onClick={() =>
-                        removeItem(i)
-                      }
-                    >
-                      Remove Item
-                    </button>
-
-                  </div>
-
-                  <div className="item-total">
-
-                    ₹
-                    {item.price * item.quantity}
-
-                  </div>
-
+                <div style={styles.cartDetails}>
+                  <span style={styles.itemBadge}>
+                    <FaSnowflake />
+                    Cold packed
+                  </span>
+                  <h3 style={styles.itemName}>{item.name}</h3>
+                  <p style={styles.itemDesc}>Farm fresh dairy product prepared for delivery.</p>
+                  <strong style={styles.mainPrice}>
+                    <FaRupeeSign />
+                    {item.price}
+                  </strong>
                 </div>
 
-              ))
-
-            )
-          }
-
+                <div style={styles.qtyPanel}>
+                  <div style={styles.qtyRow}>
+                    <button style={styles.qtyBtn} onClick={() => decreaseQty(index)} aria-label="Decrease quantity">
+                      <FaMinus />
+                    </button>
+                    <span style={styles.qtyNum}>{item.quantity}</span>
+                    <button style={styles.qtyBtn} onClick={() => increaseQty(index)} aria-label="Increase quantity">
+                      <FaPlus />
+                    </button>
+                  </div>
+                  <strong style={styles.itemTotal}>
+                    <FaRupeeSign />
+                    {item.price * item.quantity}
+                  </strong>
+                  <button style={styles.removeBtn} onClick={() => removeItem(index)}>
+                    <FaTrash />
+                    Remove
+                  </button>
+                </div>
+              </article>
+            ))
+          )}
         </div>
 
-        {/* RIGHT */}
-
-        <div className="cart-right">
-
-          <div className="summary glass">
-
-            <div className="summary-top">
-
-              <div className="circle red"></div>
-              <div className="circle yellow"></div>
-              <div className="circle green"></div>
-
-            </div>
-
-            <h2>Order Summary</h2>
-
-            <div className="summary-row">
-
-              <span>Items</span>
-
-              <span>{cart.length}</span>
-
-            </div>
-
-            <div className="summary-row">
-
-              <span>Subtotal</span>
-
-              <span>₹{total}</span>
-
-            </div>
-
-            <div className="summary-row">
-
-              <span>Delivery</span>
-
-              <span className="free">
-                FREE
-              </span>
-
-            </div>
-
-            <div className="summary-row">
-
-              <span>GST</span>
-
-              <span>₹0</span>
-
-            </div>
-
-            <hr />
-
-            <div className="final-row">
-
-              <span>Total</span>
-
-              <span>₹{total + 0}</span>
-
-            </div>
-
-            <button
-              className="checkout-btn"
-              onClick={() =>
-                navigate("/address")
-              }
-            >
-              Proceed To Checkout →
-            </button>
-
+        <aside style={styles.summary}>
+          <span style={styles.summaryIcon}>
+            <FaTruck />
+          </span>
+          <h2 style={styles.summaryTitle}>Order Summary</h2>
+          <SummaryRow label="Items" value={cart.length} />
+          <SummaryRow label="Subtotal" value={`Rs ${total}`} />
+          <SummaryRow label="Delivery" value="FREE" tone="green" />
+          <SummaryRow label="GST" value="Rs 0" />
+          <div style={styles.divider}></div>
+          <div style={styles.finalRow}>
+            <span>Total</span>
+            <strong>Rs {total}</strong>
           </div>
-
-        </div>
-
-      </div>
-
-      <style>{`
-
-      *{
-        margin:0;
-        padding:0;
-        box-sizing:border-box;
-      }
-
-      .cart-page{
-
-        min-height:100vh;
-
-        padding-top:110px;
-        padding-left:35px;
-        padding-right:35px;
-        padding-bottom:50px;
-
-        position:relative;
-
-        overflow:hidden;
-
-        background:
-        linear-gradient(
-          135deg,
-          #020617,
-          #081229,
-          #020617
-        );
-
-        color:white;
-      }
-
-      .cart-overlay{
-
-        position:absolute;
-        inset:0;
-
-        background:
-        radial-gradient(
-          circle at top left,
-          rgba(37,99,235,0.18),
-          transparent 30%
-        ),
-
-        radial-gradient(
-          circle at bottom right,
-          rgba(34,197,94,0.12),
-          transparent 30%
-        );
-      }
-
-      .cart-container{
-
-        position:relative;
-        z-index:2;
-
-        max-width:1450px;
-
-        margin:auto;
-
-        display:grid;
-
-        grid-template-columns:2fr 1fr;
-
-        gap:30px;
-      }
-
-      .cart-heading{
-
-        margin-bottom:30px;
-      }
-
-      .cart-badge{
-
-        display:inline-block;
-
-        padding:12px 22px;
-
-        border-radius:40px;
-
-        background:
-        rgba(37,99,235,0.14);
-
-        border:
-        1px solid rgba(255,255,255,0.08);
-
-        color:#60a5fa;
-
-        font-weight:600;
-
-        margin-bottom:22px;
-      }
-
-      .cart-heading h1{
-
-        font-size:64px;
-
-        line-height:1;
-
-        font-weight:900;
-
-        margin-bottom:16px;
-
-        background:
-        linear-gradient(
-          135deg,
-          #ffffff,
-          #60a5fa,
-          #22c55e
-        );
-
-        -webkit-background-clip:text;
-
-        -webkit-text-fill-color:transparent;
-      }
-
-      .cart-heading p{
-
-        color:#cbd5e1;
-
-        font-size:20px;
-
-        max-width:700px;
-
-        line-height:1.7;
-      }
-
-      .glass{
-
-        background:
-        rgba(15,23,42,0.72);
-
-        border:
-        1px solid rgba(255,255,255,0.08);
-
-        backdrop-filter:blur(20px);
-
-        box-shadow:
-        0 25px 60px rgba(0,0,0,0.45);
-      }
-
-      .cart-card{
-
-        display:flex;
-
-        align-items:center;
-
-        gap:24px;
-
-        padding:24px;
-
-        border-radius:28px;
-
-        margin-bottom:24px;
-
-        transition:0.35s;
-      }
-
-      .cart-card:hover{
-
-        transform:
-        translateY(-6px);
-
-        box-shadow:
-        0 30px 70px rgba(0,0,0,0.6);
-      }
-
-      .image-box{
-
-        position:relative;
-      }
-
-      .image-box img{
-
-        width:140px;
-        height:140px;
-
-        object-fit:cover;
-
-        border-radius:22px;
-
-        background:white;
-
-        padding:10px;
-      }
-
-      .discount{
-
-        position:absolute;
-
-        top:10px;
-        left:10px;
-
-        background:
-        linear-gradient(
-          135deg,
-          #2563eb,
-          #22c55e
-        );
-
-        color:white;
-
-        font-size:12px;
-
-        font-weight:700;
-
-        padding:6px 12px;
-
-        border-radius:20px;
-      }
-
-      .cart-details{
-
-        flex:1;
-      }
-
-      .cart-details h3{
-
-        font-size:32px;
-
-        font-weight:800;
-
-        margin-bottom:8px;
-      }
-
-      .product-desc{
-
-        color:#94a3b8;
-
-        margin-bottom:20px;
-      }
-
-      .price-row{
-
-        display:flex;
-
-        align-items:center;
-
-        gap:14px;
-
-        margin-bottom:20px;
-      }
-
-      .main-price{
-
-        color:#22c55e;
-
-        font-size:34px;
-
-        font-weight:900;
-      }
-
-      .old-price{
-
-        color:#94a3b8;
-
-        text-decoration:line-through;
-
-        font-size:22px;
-      }
-
-      .qty-row{
-
-        display:flex;
-
-        align-items:center;
-
-        gap:16px;
-
-        margin-bottom:20px;
-      }
-
-      .qty-btn{
-
-        width:42px;
-        height:42px;
-
-        border:none;
-
-        border-radius:12px;
-
-        background:
-        linear-gradient(
-          135deg,
-          #2563eb,
-          #1d4ed8
-        );
-
-        color:white;
-
-        font-size:24px;
-
-        font-weight:700;
-
-        cursor:pointer;
-
-        transition:0.3s;
-      }
-
-      .qty-btn:hover{
-
-        transform:scale(1.08);
-      }
-
-      .qty-num{
-
-        font-size:22px;
-
-        font-weight:700;
-
-        color:#22c55e;
-      }
-
-      .remove-btn{
-
-        border:none;
-
-        background:none;
-
-        color:#ef4444;
-
-        font-size:16px;
-
-        cursor:pointer;
-
-        font-weight:600;
-      }
-
-      .remove-btn:hover{
-
-        text-decoration:underline;
-      }
-
-      .item-total{
-
-        font-size:34px;
-
-        font-weight:900;
-
-        color:#22c55e;
-      }
-
-      .summary{
-
-        position:sticky;
-
-        top:100px;
-
-        padding:34px;
-
-        border-radius:30px;
-      }
-
-      .summary-top{
-
-        display:flex;
-
-        gap:10px;
-
-        margin-bottom:24px;
-      }
-
-      .circle{
-
-        width:16px;
-        height:16px;
-
-        border-radius:50%;
-      }
-
-      .red{
-        background:#ef4444;
-      }
-
-      .yellow{
-        background:#f59e0b;
-      }
-
-      .green{
-        background:#22c55e;
-      }
-
-      .summary h2{
-
-        font-size:42px;
-
-        font-weight:900;
-
-        margin-bottom:28px;
-      }
-
-      .summary-row{
-
-        display:flex;
-
-        justify-content:space-between;
-
-        margin-bottom:18px;
-
-        color:#cbd5e1;
-
-        font-size:18px;
-      }
-
-      .free{
-
-        color:#22c55e;
-
-        font-weight:700;
-      }
-
-      hr{
-
-        border:none;
-
-        height:1px;
-
-        background:
-        rgba(255,255,255,0.1);
-
-        margin:24px 0;
-      }
-
-      .final-row{
-
-        display:flex;
-
-        justify-content:space-between;
-
-        align-items:center;
-
-        font-size:30px;
-
-        font-weight:900;
-
-        margin-bottom:28px;
-      }
-
-      .checkout-btn{
-
-        width:100%;
-
-        padding:20px;
-
-        border:none;
-
-        border-radius:18px;
-
-        background:
-        linear-gradient(
-          135deg,
-          #2563eb,
-          #22c55e
-        );
-
-        color:white;
-
-        font-size:20px;
-
-        font-weight:800;
-
-        cursor:pointer;
-
-        transition:0.3s;
-      }
-
-      .checkout-btn:hover{
-
-        transform:
-        translateY(-4px);
-
-        box-shadow:
-        0 20px 40px rgba(37,99,235,0.35);
-      }
-
-      .empty-cart{
-
-        padding:60px;
-
-        border-radius:28px;
-
-        text-align:center;
-      }
-
-      .empty-cart h2{
-
-        font-size:42px;
-
-        margin-bottom:14px;
-      }
-
-      .empty-cart p{
-
-        color:#cbd5e1;
-
-        margin-bottom:28px;
-      }
-
-      .shop-btn{
-
-        padding:18px 34px;
-
-        border:none;
-
-        border-radius:18px;
-
-        background:
-        linear-gradient(
-          135deg,
-          #2563eb,
-          #22c55e
-        );
-
-        color:white;
-
-        font-size:18px;
-
-        font-weight:700;
-
-        cursor:pointer;
-      }
-
-      @media(max-width:1100px){
-
-        .cart-container{
-
-          grid-template-columns:1fr;
-        }
-
-        .summary{
-
-          position:static;
-        }
-      }
-
-      @media(max-width:700px){
-
-        .cart-page{
-
-          padding-left:18px;
-          padding-right:18px;
-        }
-
-        .cart-heading h1{
-
-          font-size:46px;
-        }
-
-        .cart-card{
-
-          flex-direction:column;
-
-          align-items:flex-start;
-        }
-
-        .item-total{
-
-          align-self:flex-end;
-        }
-
-        .summary h2{
-
-          font-size:34px;
-        }
-      }
-
-      `}</style>
-
-    </div>
+          <button style={styles.checkoutBtn} onClick={() => navigate("/address")} disabled={cart.length === 0}>
+            Proceed To Checkout
+            <FaArrowRight />
+          </button>
+        </aside>
+      </section>
+    </main>
   );
 };
 
+const SummaryRow = ({ label, value, tone }) => (
+  <div style={styles.summaryRow}>
+    <span>{label}</span>
+    <strong style={tone === "green" ? styles.greenText : undefined}>{value}</strong>
+  </div>
+);
+
 export default Cart;
+
+const styles = {
+  page: {
+    minHeight: "100vh",
+    padding: "122px clamp(16px, 4vw, 42px) 54px",
+    color: "#10233f",
+    background:
+      "radial-gradient(circle at 82% 12%, rgba(255,212,59,0.28), transparent 22rem), radial-gradient(circle at 12% 22%, rgba(8,120,184,0.18), transparent 24rem), linear-gradient(90deg, rgba(23,82,170,0.06) 1px, transparent 1px), linear-gradient(rgba(23,82,170,0.06) 1px, transparent 1px), linear-gradient(135deg,#ffffff 0%,#e8f6ff 45%,#fff7d9 100%)",
+    backgroundSize: "auto, auto, 46px 46px, 46px 46px, auto",
+  },
+  container: {
+    display: "grid",
+    gridTemplateColumns: "minmax(0, 1fr) minmax(310px, 390px)",
+    gap: 22,
+    maxWidth: 1220,
+    margin: "0 auto",
+  },
+  left: {
+    minWidth: 0,
+  },
+  hero: {
+    marginBottom: 22,
+    padding: 28,
+    border: "1px solid rgba(11,87,164,0.14)",
+    borderRadius: 8,
+    background: "linear-gradient(135deg, rgba(255,255,255,0.94), rgba(240,247,255,0.9))",
+    boxShadow: "0 30px 90px rgba(6,35,83,0.13)",
+  },
+  eyebrow: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 9,
+    minHeight: 38,
+    padding: "8px 14px",
+    borderRadius: 999,
+    color: "#0b57a4",
+    background: "#fff2a8",
+    fontSize: 13,
+    fontWeight: 900,
+  },
+  heading: {
+    marginTop: 16,
+    color: "#0b3f8a",
+    fontSize: "clamp(34px, 5vw, 56px)",
+    lineHeight: 1.04,
+    fontWeight: 900,
+  },
+  subtitle: {
+    marginTop: 12,
+    color: "#53667f",
+    fontSize: 16,
+    lineHeight: 1.6,
+  },
+  cartCard: {
+    display: "grid",
+    gridTemplateColumns: "130px minmax(0, 1fr) 190px",
+    gap: 18,
+    alignItems: "center",
+    marginBottom: 16,
+    padding: 18,
+    border: "1px solid rgba(11,87,164,0.12)",
+    borderRadius: 8,
+    background: "rgba(255,255,255,0.94)",
+    boxShadow: "0 24px 60px rgba(6,35,83,0.1)",
+  },
+  image: {
+    width: 130,
+    height: 130,
+    objectFit: "cover",
+    borderRadius: 8,
+    background: "#eef5ff",
+  },
+  itemBadge: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 7,
+    minHeight: 30,
+    padding: "0 10px",
+    borderRadius: 999,
+    color: "#166534",
+    background: "#dcfce7",
+    fontSize: 12,
+    fontWeight: 900,
+  },
+  itemName: {
+    marginTop: 10,
+    color: "#10233f",
+    fontSize: 24,
+    fontWeight: 900,
+    lineHeight: 1.15,
+    wordBreak: "break-word",
+  },
+  itemDesc: {
+    marginTop: 6,
+    color: "#53667f",
+    fontSize: 13,
+    fontWeight: 800,
+    lineHeight: 1.45,
+  },
+  mainPrice: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 4,
+    marginTop: 10,
+    color: "#0b57a4",
+    fontSize: 24,
+    fontWeight: 900,
+  },
+  qtyPanel: {
+    display: "grid",
+    justifyItems: "end",
+    gap: 12,
+  },
+  qtyRow: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 10,
+  },
+  qtyBtn: {
+    display: "grid",
+    width: 38,
+    height: 38,
+    placeItems: "center",
+    border: 0,
+    borderRadius: 8,
+    color: "#fff",
+    background: "#0b57a4",
+    cursor: "pointer",
+  },
+  qtyNum: {
+    minWidth: 28,
+    color: "#10233f",
+    fontSize: 20,
+    fontWeight: 900,
+    textAlign: "center",
+  },
+  itemTotal: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 4,
+    color: "#0b3f8a",
+    fontSize: 24,
+    fontWeight: 900,
+  },
+  removeBtn: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: 7,
+    minHeight: 38,
+    padding: "0 12px",
+    border: 0,
+    borderRadius: 8,
+    color: "#fff",
+    background: "#dc2626",
+    fontSize: 13,
+    fontWeight: 900,
+    cursor: "pointer",
+  },
+  summary: {
+    position: "sticky",
+    top: 108,
+    alignSelf: "start",
+    padding: 24,
+    border: "1px solid rgba(11,87,164,0.12)",
+    borderRadius: 8,
+    background: "linear-gradient(145deg, rgba(11,63,138,0.98), rgba(8,120,184,0.92))",
+    color: "#fff",
+    boxShadow: "0 30px 90px rgba(6,35,83,0.18)",
+  },
+  summaryIcon: {
+    display: "grid",
+    width: 50,
+    height: 50,
+    placeItems: "center",
+    borderRadius: 8,
+    color: "#0b3f8a",
+    background: "#ffd43b",
+    fontSize: 20,
+  },
+  summaryTitle: {
+    marginTop: 18,
+    fontSize: 30,
+    fontWeight: 900,
+  },
+  summaryRow: {
+    display: "flex",
+    justifyContent: "space-between",
+    gap: 14,
+    marginTop: 18,
+    color: "#dfeeff",
+    fontSize: 15,
+    fontWeight: 800,
+  },
+  greenText: {
+    color: "#bbf7d0",
+  },
+  divider: {
+    height: 1,
+    margin: "22px 0",
+    background: "rgba(255,255,255,0.18)",
+  },
+  finalRow: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: 14,
+    fontSize: 22,
+    fontWeight: 900,
+  },
+  checkoutBtn: {
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 10,
+    width: "100%",
+    minHeight: 54,
+    marginTop: 24,
+    border: 0,
+    borderRadius: 8,
+    color: "#0b3f8a",
+    background: "#ffd43b",
+    fontSize: 15,
+    fontWeight: 900,
+    cursor: "pointer",
+  },
+  shopBtn: {
+    minHeight: 48,
+    padding: "0 18px",
+    border: 0,
+    borderRadius: 8,
+    color: "#fff",
+    background: "linear-gradient(135deg,#0b57a4,#0878b8)",
+    fontSize: 14,
+    fontWeight: 900,
+    cursor: "pointer",
+  },
+  emptyCard: {
+    display: "grid",
+    placeItems: "center",
+    minHeight: 320,
+    padding: 30,
+    border: "1px solid rgba(11,87,164,0.12)",
+    borderRadius: 8,
+    background: "rgba(255,255,255,0.9)",
+    color: "#0b3f8a",
+    textAlign: "center",
+    boxShadow: "0 24px 60px rgba(6,35,83,0.1)",
+  },
+};
